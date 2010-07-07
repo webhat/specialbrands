@@ -12,9 +12,13 @@ Db::getInstance()->getRow('');
 Db::getInstance()->Execute('');
 */
 
-class efide extends Module {
+include_once(dirname(__FILE__).'/settings.php');
+
+ini_set('soap.wsdl_cache_ttl', 1);
+
+class specialbrands extends Module {
  	public function __construct() {
-		$this->name = 'efide-spm';
+		$this->name = 'specialbrands';
 		$this->tab = 'Tools';
 
 		parent::__construct();
@@ -23,7 +27,7 @@ class efide extends Module {
 		$this->description = $this->l('Adds communication between SPM and PrestaShop');
 		$this->confirmUninstall = $this->l('Are you sure you want remove this module?');
 
-		$this->version = '1.4';
+		$this->version = '0.9';
 		$this->error = false;
 		$this->valid = false;
 
@@ -32,6 +36,8 @@ class efide extends Module {
  	public function install() {
 		if (parent::install() == false OR $this->registerHook('hookFooter') == false)
 			return false;
+
+// TODO: Check Registered Access Key
 
 		Db::getInstance()->Execute('
 		CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_.'efide_customer_credit` (
@@ -84,6 +90,59 @@ class efide extends Module {
 	}
 
 	private function _displayForm() {
+	}
+
+	public function displayShopAdminForm($shop_account_id) {
+		global $smarty;
+		$error = false;
+		$confirm = false;
+
+		if(isset($_POST["submit"])) {
+			/* Fields verifications */
+			if (
+					empty($_POST['c'])
+					OR empty($_POST['fn'])
+					OR empty($_POST['ln'])
+					OR empty($_POST['mail'])
+					OR empty($_POST['resource_id'])
+					OR empty($_POST['enable'])
+					OR empty($_POST['reset'])
+					)
+				$error = $this->l('You must fill all fields.');
+			elseif (!Validate::isEmail($_POST['email']))
+				$error = $this->l('Your email is invalid.');
+			else {
+				$c						= $_POST['c'];
+				$fn						= $_POST['fn'];
+				$ln						= $_POST['ln'];
+				$mail					= $_POST['mail'];
+				$resource_id	= $_POST['resource_id'];
+				$account_id		= $_POST['account_id'];
+				$enable				= $_POST['enable'];
+				$reset				= $_POST['reset'];
+			}
+		}
+
+		if(!isset($_POST["account_id"])
+				OR empty($_POST["account_id"])) {
+		} else {
+		}
+
+		$smarty->assign(array(
+			'c' => $c,
+			'fn' => $fn,
+			'ln' => $ln,
+			'mail' => $mail,
+			'resource_id' => $resource_id,
+			'account_id' => $account_id,
+			'enable' => $enable,
+			'reset' => $reset,
+			'errors' => $error,
+			'shop' => $shop
+		));
+
+
+		return $this->display(__FILE__, 'specialbrands.tpl');
 	}
 }
 

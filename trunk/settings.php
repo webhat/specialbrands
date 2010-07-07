@@ -1,11 +1,11 @@
 <?php
-if(is_file("./accesskey.php")) {
+if(is_file(dirname(__FILE__).'/accesskey.php')) {
+	include_once(dirname(__FILE__).'/accesskey.php');
+} elseif(is_file("./accesskey.php")) {
 	include_once("accesskey.php");
-} else
-if(is_file("../accesskey.php")) {
+} elseif(is_file("../accesskey.php")) {
 	include_once("accesskey.php");
-} else
-if(is_file("../../accesskey.php")) {
+} elseif(is_file("../../accesskey.php")) {
 	include_once("accesskey.php");
 }
     //$host = "http://localhost:8082/wsdl/OperatorAdmin_strict.wsdl";
